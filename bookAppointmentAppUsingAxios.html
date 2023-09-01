@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Delete from list</title>
+    <link rel="stylesheet" href="style1.css">
+  </head>
+  <body>
+    <section class="container">
+        <form onsubmit="handleSubmit(event)" id="my-form">
+          <label> Name: </label>
+          <input type="text" id="username" required>
+          <label> EmailId: </label>
+          <input type="email" id="emailId" required>
+          <label>Phone Number: </label>
+          <input type="tel" id="phonenumber">
+          <input class="btn" type="submit" value="Submit">
+        </form>
+    </section>
+    <ul id="listOfUsers"></ul>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      async function handleSubmit(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("emailId").value;
+        const phonenumber = document.getElementById("phonenumber").value;
+        
+        const obj = {
+          username,
+          email,
+          phonenumber,
+        };
+
+        try {
+          const response = await axios.post("https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData", obj);
+          
+          // Assuming the response contains user data, you can display it.
+          showUserOnScreen(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      function showUserOnScreen(obj) {
+        const parentElem = document.getElementById("listOfUsers");
+        const childElem = document.createElement("li");
+        childElem.textContent = obj.username + ' - ' + obj.email + ' - ' + obj.phonenumber;
+
+        const deleteButton = document.createElement("input");
+        deleteButton.type = "button";
+        deleteButton.value = "Delete";
+        deleteButton.onclick = () => {
+          // Handle delete logic here
+          parentElem.removeChild(childElem);
+        };
+
+        childElem.appendChild(deleteButton);
+        parentElem.appendChild(childElem);
+      }
+    </script>
+  </body>
+</html>

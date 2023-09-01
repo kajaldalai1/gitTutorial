@@ -21,7 +21,7 @@
       
         </form>
     </section>    
-      <ul id="listOfitems"></ul>
+      <ul id="listOfUsers"></ul>
       <script>
         function saveToLocalStorage(event){
             event.preventDefault();
@@ -41,7 +41,7 @@
     <script>
         
         function showUserOnScreen(obj){
-            const parentElem = document.getElementById("listOfitems")
+            const parentElem = document.getElementById("listOfUsers")
             const childElem = document.createElement('li')
             childElem.textContent = obj.username + ' - ' + obj.email + ' - ' + obj.phonenumber
 
