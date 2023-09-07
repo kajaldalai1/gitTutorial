@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Bill App</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Restaurant Bill App</h1>
+    <section class="container">
+        <form id="my-form">
+            <label for="dish">Dish:</label>
+            <input type="text" id="dishInput" required>
+            <label for="table">Table:</label>
+            <select id="tableInput" required>
+                <option value="Table 1">Table 1</option>
+                <option value="Table 2">Table 2</option>
+                <option value="Table 3">Table 3</option>
+                <option value="Table 4">Table 4</option>
+                <option value="Table 5">Table 5</option>
+            </select>
+            <label for="price">Price:</label>
+            <input type="number" id="priceInput" required step="0.01">
+            <button type="button" onclick="addBill()">Add to Bill</button>
+        </form>
+    </section>
+    <section class="container">
+        <h2>Bill Details</h2>
+        <ul id="billList"></ul>
+    </section>
+    <script>
+        const billList = document.getElementById("billList");
+
+        // Function to load bill data from localStorage
+        function loadBillsFromLocalStorage() {
+            const savedBillData = JSON.parse(localStorage.getItem("billData")) || [];
+            
+            savedBillData.forEach((bill) => {
+                appendBillToUI(bill);
+            });
+        }
+
+        // Function to add a bill
+        function addBill() {
+            const dishInput = document.getElementById("dishInput");
+            const tableInput = document.getElementById("tableInput");
+            const priceInput = document.getElementById("priceInput");
+
+            const dish = dishInput.value;
+            const table = tableInput.value;
+            const price = parseFloat(priceInput.value).toFixed(2);
+
+            if (dish && table && price) {
+                const newBill = { dish, table, price };
+
+                // Append the new bill to the UI
+                appendBillToUI(newBill);
+
+                // Save the new bill data to localStorage
+                const savedBillData = JSON.parse(localStorage.getItem("billData")) || [];
+                savedBillData.push(newBill);
+                localStorage.setItem("billData", JSON.stringify(savedBillData));
+
+                // Clear the form
+                dishInput.value = "";
+                tableInput.value = "Table 1"; // Reset to the default table
+                priceInput.value = "";
+
+                // Focus back on the Dish input
+                dishInput.focus();
+            } else {
+                alert("Please fill in all the fields.");
+            }
+        }
+
+        // Function to append a bill to the UI
+        function appendBillToUI(bill) {
+            const billItem = document.createElement("li");
+            billItem.innerHTML = `Dish: ${bill.dish} - Table: ${bill.table} - Price: $${bill.price}
+                <button onclick="editBill(this)">Edit</button>
+                <button onclick="deleteBill(this)">Delete</button>`;
+            billList.appendChild(billItem);
+        }
+
+        // Function to edit a bill
+        function editBill(button) {
+            const listItem = button.parentElement;
+            const itemText = listItem.innerText;
+
+            const dish = prompt("Edit Dish:", itemText.split("-")[0].trim());
+            const table = prompt("Edit Table:", itemText.split("-")[1].trim());
+            const price = prompt("Edit Price:", itemText.split("-")[2].trim().replace("$", ""));
+
+            if (dish !== null && table !== null && price !== null) {
+                const editedItemText = `Dish: ${dish} - Table: ${table} - Price: $${price}`;
+                listItem.innerHTML = `${editedItemText}
+                    <button onclick="editBill(this)">Edit</button>
+                    <button onclick="deleteBill(this)">Delete</button>`;
+
+                // Update bill data in localStorage
+                const savedBillData = JSON.parse(localStorage.getItem("billData")) || [];
+                const billIndex = Array.from(billList.children).indexOf(listItem);
+                if (billIndex !== -1) {
+                    savedBillData[billIndex] = { dish, table, price };
+                    localStorage.setItem("billData", JSON.stringify(savedBillData));
+                }
+            }
+        }
+
+        // Function to delete a bill
+        function deleteBill(button) {
+            const listItem = button.parentElement;
+            const billIndex = Array.from(billList.children).indexOf(listItem);
+
+            if (billIndex !== -1) {
+                                // Remove the bill from the UI
+                                listItem.remove();
+
+// Remove bill data from localStorage
+const savedBillData = JSON.parse(localStorage.getItem("billData")) || [];
+savedBillData.splice(billIndex, 1);
+localStorage.setItem("billData", JSON.stringify(savedBillData));
+}
+}
+
+// Load bills from localStorage when the page is loaded
+window.addEventListener('DOMContentLoaded', loadBillsFromLocalStorage);
+</script>
+</body>
+</html>
