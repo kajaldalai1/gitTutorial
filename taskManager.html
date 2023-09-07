@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style5.css">
+
+</head>
+<body>
+    <h1>Task Manager</h1>
+
+    <!-- Form to add tasks -->
+    <form id="task-form">
+        <input type="text" id="task" placeholder="Add a task" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <!-- List to display tasks -->
+    <ul id="task-list">
+        <!-- Tasks will be displayed here -->
+    </ul>
+
+    <script>
+        // Dummy API URL (replace with your actual API URL)
+        const apiUrl = 'https://jsonplaceholder.typicode.com/todos';
+
+        // Function to fetch tasks from the API
+        function fetchTasks() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(tasks => {
+                    // Display tasks on the UI
+                    const taskList = document.getElementById('task-list');
+                    taskList.innerHTML = '';
+
+                    tasks.forEach(task => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <span>${task.title}</span>
+                            <button class="edit-btn">Edit</button>
+                            <button class="delete-btn">Delete</button>
+                        `;
+
+                        // Edit task
+                        li.querySelector('.edit-btn').addEventListener('click', () => {
+                            const newTitle = prompt('Edit task:', task.title);
+                            if (newTitle !== null) {
+                                updateTask(task.id, newTitle);
+                            }
+                        });
+
+                        // Delete task
+                        li.querySelector('.delete-btn').addEventListener('click', () => {
+                            deleteTask(task.id);
+                        });
+
+                        taskList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error fetching tasks:', error));
+        }
+
+        // Function to add a new task
+        function addTask(title) {
+            fetch(apiUrl, {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: title,
+                    completed: false
+                }),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
+            })
+            .then(response => response.json())
+            .then(() => {
+                fetchTasks();
+            })
+            .catch(error => console.error('Error adding task:', error));
+        }
+
+        // Function to update a task
+        function updateTask(id, newTitle) {
+            fetch(`${apiUrl}/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    title: newTitle
+                }),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
+            })
+            .then(() => {
+                fetchTasks();
+            })
+            .catch(error => console.error('Error updating task:', error));
+        }
+
+        // Function to delete a task
+        function deleteTask(id) {
+            fetch(`${apiUrl}/${id}`, {
+                method: 'DELETE'
+            })
+            .then(() => {
+                fetchTasks();
+            })
+            .catch(error => console.error('Error deleting task:', error));
+        }
+
+        // Handle form submission to add a new task
+        document.getElementById('task-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const taskInput = document.getElementById('task');
+            const taskTitle = taskInput.value.trim();
+
+            if (taskTitle !== '') {
+                addTask(taskTitle);
+                taskInput.value = '';
+            }
+        });
+
+        // Fetch tasks when the page loads
+        window.addEventListener('load', fetchTasks);
+    </script>
+</body>
+</html>

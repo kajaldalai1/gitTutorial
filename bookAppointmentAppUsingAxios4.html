@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit and Delete User Details</title>
+  <link rel="stylesheet" href="style1.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+</head>
+<body>
+  <section class="container">
+    <!-- Main registration form for both new user creation and editing -->
+    <form onsubmit="saveUser(event)" id="my-form">
+      <!-- Add a hidden input field for storing the user ID -->
+      <input type="hidden" id="userId" name="userId" value="">
+      <label>Name:</label>
+      <input type="text" id="username" required>
+      <label>EmailId:</label>
+      <input type="email" id="emailId" required>
+      <label>Phone Number:</label>
+      <input type="tel" id="phonenumber">
+      <input class="btn" type="submit" value="Submit">
+    </form>
+  </section>
+
+  <!-- User list with edit and delete buttons -->
+  <ul id="listOfUsers">
+    <!-- Users will be dynamically added here -->
+  </ul>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
+  <script>
+    // Function to fetch and display all users
+    function getUsers() {
+      axios.get("https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData")
+        .then((response) => {
+          const users = response.data;
+          const userList = document.getElementById("listOfUsers");
+
+          // Clear the previous user list
+          userList.innerHTML = "";
+
+          users.forEach((user) => {
+            showUserOnScreen(user);
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching user data: ", error);
+        });
+    }
+
+    // Function to populate the form for editing
+    function populateEditForm(user) {
+      document.getElementById("userId").value = user._id; // Set the user's ID
+      document.getElementById("username").value = user.username;
+      document.getElementById("emailId").value = user.email;
+      document.getElementById("phonenumber").value = user.phonenumber;
+    }
+
+    // Event listener for edit buttons
+    function editUser(userId) {
+      axios.get(`https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData/${userId}`)
+        .then((response) => {
+          const user = response.data;
+          populateEditForm(user);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data: ", error);
+        });
+    }
+
+    // Event listener for delete buttons
+    function deleteUser(userId, element) {
+      axios
+        .delete(
+          `https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData/${userId}`
+        )
+        .then(() => {
+          console.log("User deleted from CRUD CRUD");
+          element.remove(); // Remove user detail from the website
+        })
+        .catch((error) => {
+          console.error("Error deleting user: ", error);
+        });
+    }
+
+    // Save user data to CRUD CRUD
+    function saveUser(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+
+      const user = {
+        _id: formData.get("userId"), // Get the user ID
+        username: formData.get("username"),
+        email: formData.get("emailId"),
+        phonenumber: formData.get("phonenumber"),
+      };
+
+      const userId = user._id;
+      const apiUrl = userId
+        ? `https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData/${userId}`
+        : "https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData";
+      const method = userId ? "PUT" : "POST";
+
+      axios({
+        method: method,
+        url: apiUrl,
+        data: user,
+      })
+        .then((response) => {
+          form.reset(); // Clear the form fields after successful submission
+          getUsers(); // Fetch and display the updated user list
+        })
+        .catch((error) => {
+          console.error("Error saving/updating user data: ", error);
+        });
+    }
+
+    // Function to show a user on the screen
+    function showUserOnScreen(user) {
+      const userList = document.getElementById("listOfUsers");
+
+      // Create a new list item for the user
+      const listItem = document.createElement("li");
+      listItem.setAttribute("id", `user-${user._id}`);
+      listItem.textContent = `${user.username} - ${user.email} - ${user.phonenumber}`;
+
+      // Add an edit button to the list item
+      const editButton = document.createElement("button");
+      editButton.textContent = "Edit";
+      editButton.addEventListener("click", () => {
+        editUser(user._id);
+      });
+
+      // Add a delete button to the list item
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Delete";
+      deleteButton.addEventListener("click", () => {
+        deleteUser(user._id, listItem);
+      });
+
+      // Append the edit and delete buttons to the list item
+      listItem.appendChild(editButton);
+      listItem.appendChild(deleteButton);
+
+      // Append the list item to the user list
+      userList.appendChild(listItem);
+    }
+
+    // Fetch and display users when the page loads
+    getUsers();
+  </script>
+</body>
+</html>
