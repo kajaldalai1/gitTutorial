@@ -32,7 +32,7 @@
   <script>
     // Function to fetch and display all users
     function getUsers() {
-      axios.get("https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData")
+      axios.get("https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9")
         .then((response) => {
           const users = response.data;
           const userList = document.getElementById("listOfUsers");
@@ -59,7 +59,7 @@
 
     // Event listener for edit buttons
     function editUser(userId) {
-      axios.get(`https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData/${userId}`)
+      axios.get(`https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/${userId}`)
         .then((response) => {
           const user = response.data;
           populateEditForm(user);
@@ -73,7 +73,7 @@
     function deleteUser(userId, element) {
       axios
         .delete(
-          `https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData/${userId}`
+          `https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/${userId}`
         )
         .then(() => {
           console.log("User deleted from CRUD CRUD");
@@ -99,8 +99,8 @@
 
       const userId = user._id;
       const apiUrl = userId
-        ? `https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData/${userId}`
-        : "https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/appointmentData";
+        ? `https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9/${userId}`
+        : "https://crudcrud.com/api/aabddd71a95f4740a66f56078de3aec9";
       const method = userId ? "PUT" : "POST";
 
       axios({
