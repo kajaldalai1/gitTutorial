@@ -59,7 +59,7 @@
 	try {
 		var total_cost = 0;
             ulparentElement = document.getElementById("listProducts")
-		const resp = await axios.get("https://crudcrud.com/api/1e8244437e05424497c34693e0fbc4a3/productdata");
+		const resp = await axios.get("https://crudcrud.com/api/149b431e78f34019b90ffe89cc9bfe57/productdata");
 		
 		
 		arr = resp.data
@@ -85,7 +85,7 @@
 
                     const deletePostRequest = async(item_id,li) => {
                             try {
-                                const resp = await axios.delete("https://crudcrud.com/api/1e8244437e05424497c34693e0fbc4a3/productdata/" + item_id); // Add / before item_id
+                                const resp = await axios.delete("https://crudcrud.com/api/149b431e78f34019b90ffe89cc9bfe57/productdata/" + item_id); // Add / before item_id
                                         
                                         ulparentElement.removeChild(li);
                                     
@@ -143,7 +143,7 @@
         }
         const sendPostRequest = async (obj) => {
                 try {
-                    const resp = await axios.post("https://crudcrud.com/api/1e8244437e05424497c34693e0fbc4a3/productdata",obj);
+                    const resp = await axios.post("https://crudcrud.com/api/149b431e78f34019b90ffe89cc9bfe57/productdata",obj);
                     console.log(resp.data);
                     document.getElementById("listProducts").innerHTML = "";
                     refreshPage();
