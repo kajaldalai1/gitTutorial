@@ -1,3 +1,7 @@
-const fs=require('fs');
+const http=require('http');
 
-fs.writeFileSync('hello.txt', 'Hello from node.js');
+const routes = require('./routes.js');
+console.log(routes.someText);
+
+const server = http.createServer(routes);
+server.listen(3003);
