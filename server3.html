@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message Form</title>
+</head>
+<body>
+    <h1>Message Board</h1>
+    <form action="/add-message" method="POST">
+        <input type="text" name="message" placeholder="Enter your message" required>
+        <button type="submit">Submit</button>
+    </form>
+    <h2>Messages:</h2>
+    <ul id="message-list">
+        <!-- Messages will be displayed here -->
+    </ul>
+</body>
+</html>
