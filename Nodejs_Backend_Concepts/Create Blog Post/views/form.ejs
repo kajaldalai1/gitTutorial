@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Blog App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #750691;
+            color: #ecf0f1;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        #createPostForm,
+        .jumbotron {
+            background-color: #db3490;
+            color: #ecf0f1;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label,
+        .list-group-item {
+            color: #2c3e50;
+        }
+
+        #postsList {
+            list-style: none;
+            padding: 0;
+        }
+
+        .post-item {
+            background-color: #2980b9;
+            border: 1px solid #248d09;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 20px;
+            color: #ecf0f1;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .post-item:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Blog App</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Create a new post</h2>
+                <form id="createPostForm" class="form">
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter the title" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="content">Content:</label>
+                        <textarea class="form-control" id="content" name="content" placeholder="Enter the content" required></textarea>
+                    </div>
+                
+                    <button type="submit" class="btn btn-primary">Create Post</button>
+                </form>
+                
+            </div>
+
+            <div class="col-md-6">
+                <h2>All Posts</h2>
+                <ul id="postsList" class="list-group">
+                    <!-- Your list of blog posts will be displayed here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const createPostForm = document.getElementById('createPostForm');
+            createPostForm.addEventListener('submit', createPost);
+
+            refreshPosts();
+
+            function createPost(event) {
+                event.preventDefault();
+                const title = createPostForm.querySelector('[name="title"]').value;
+                const content = createPostForm.querySelector('[name="content"]').value;
+
+                const newPost = {
+                    title,
+                    content,
+                };
+
+                axios.post("http://localhost:3000/posts", newPost)
+                    .then(response => {
+                        console.log(response);
+                        refreshPosts();
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+
+            function refreshPosts() {
+                axios.get("http://localhost:3000/posts")
+                    .then(response => {
+                        const posts = response.data;
+                        const postsList = document.getElementById("postsList");
+
+                        postsList.innerHTML = "";  // Clear existing posts
+
+                        posts.forEach(post => {
+                            const listItem = document.createElement("li");
+                            listItem.className = "list-group-item post-item";
+                            listItem.innerHTML = `<h4>${post.title}</h4>
+                                                <p>${post.content}</p>`;
+                            postsList.appendChild(listItem);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>
